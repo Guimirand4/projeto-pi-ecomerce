@@ -1,5 +1,0 @@
-package ecomerce_pi.ecomerce.repository;
-
-public class UsuarioRepository {
-
-}

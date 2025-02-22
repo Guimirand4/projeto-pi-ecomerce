@@ -1,9 +1,0 @@
-spring.application.name=ecomerce-pi
-spring.datasource.url=jdbc:sqlite:./database/ecommerce.db
-spring.datasource.driver-class-name=org.sqlite.JDBC
-spring.jpa.database-platform=org.hibernate.dialect.SQLiteDialect
-spring.datasource.username=
-spring.datasource.password=
-spring.jpa.hibernate.ddl-auto=update
-
-
