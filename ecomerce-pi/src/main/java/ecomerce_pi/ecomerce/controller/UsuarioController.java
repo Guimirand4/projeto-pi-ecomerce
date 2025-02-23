@@ -1,8 +1,9 @@
 package ecomerce_pi.ecomerce.controller;
 
-
 import ecomerce_pi.ecomerce.model.Usuario;
 import ecomerce_pi.ecomerce.service.UsuarioService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,16 +17,29 @@ public class UsuarioController {
     }
 
     @PostMapping("/cadastro")
-    public String cadastrarUsuario(@RequestBody Usuario usuario) {
+    public ResponseEntity<String> cadastrarUsuario( @RequestBody Usuario usuario) {
         usuarioService.cadastrarUsuario(usuario);
-        return "Usuário cadastrado com sucesso!";
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso!");
     }
 
     @PostMapping("/login")
-    public String autenticarUsuario(@RequestParam String email, @RequestParam String senha) {
-        if (usuarioService.autenticarUsuario(email, senha)) {
-            return "Login bem-sucedido!";
+    public ResponseEntity<String> autenticarUsuario(@RequestBody Usuario usuario) {
+        if (usuarioService.autenticarUsuario(usuario.getEmail(), usuario.getSenha())) {
+            return ResponseEntity.ok("Login bem-sucedido!");
         }
-        return "Credenciais inválidas!";
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas!");
+    }
+
+    
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login"; 
+    }
+
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                             .body("Erro interno: " + e.getMessage());
     }
 }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Login </title>
+</head>
+<body>
+    <h1>Login</h1>
+	<form id="loginForm">
+	    <input type="email" id="email" name="email" required placeholder="Email">
+	    <input type="password" id="senha" name="senha" required placeholder="Senha">
+	    <button type="submit">Login</button>
+	</form>
+
+	<script>
+	document.getElementById("loginForm").addEventListener("submit", function(event) {
+	    event.preventDefault();
+
+	    const email = document.getElementById("email").value;
+	    const senha = document.getElementById("senha").value;
+
+	    fetch("http://localhost:8080/usuarios/login", {
+	        method: "POST",
+	        headers: {
+	            "Content-Type": "application/json"
+	        },
+	        body: JSON.stringify({ email: email, senha: senha })
+	    })
+	    .then(response => {
+	        if (response.ok) {
+	            window.location.href = "home.html"; // Redireciona para home.html se o login for bem-sucedido
+	        } else {
+	            return response.text().then(text => { throw new Error(text); });
+	        }
+	    })
+	    .catch(error => {
+	        alert("Erro: " + error.message); // Exibe erro caso as credenciais sejam inválidas
+	    });
+	});
+	</script>
+
+</body>
+</html>
