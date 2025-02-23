@@ -28,12 +28,14 @@
 	    })
 	    .then(response => {
 	        if (response.ok) {
-	            window.location.href = "home.html"; // Redireciona para home.html se o login for bem-sucedido
+				console.log("Redirecionando para admin.html");
+	            window.location.href = "admin.html"; 
 	        } else {
 	            return response.text().then(text => { throw new Error(text); });
 	        }
 	    })
 	    .catch(error => {
+			console.log("Erro:", error.message);
 	        alert("Erro: " + error.message); // Exibe erro caso as credenciais sejam inválidas
 	    });
 	});

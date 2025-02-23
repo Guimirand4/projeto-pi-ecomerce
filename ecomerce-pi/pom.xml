@@ -41,6 +41,24 @@
 			<artifactId>hibernate-community-dialects</artifactId>
 			<version>6.6.5.Final</version>
 		</dependency>
+		    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>6.2.0.Final</version> <!-- Verifique a versão mais recente -->
+    </dependency>
+
+    <!-- Dependência para o Jakarta Validation API -->
+    <dependency>
+        <groupId>jakarta.validation</groupId>
+        <artifactId>jakarta.validation-api</artifactId>
+        <version>2.0.2</version> <!-- Verifique a versão mais recente -->
+    </dependency>
+
+    <!-- Dependência para integração com o Spring Boot -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

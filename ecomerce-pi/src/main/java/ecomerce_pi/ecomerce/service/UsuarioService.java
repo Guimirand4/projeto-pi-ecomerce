@@ -5,6 +5,7 @@ import ecomerce_pi.ecomerce.repository.UsuarioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,4 +28,9 @@ public class UsuarioService {
         Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
         return usuario.isPresent() && passwordEncoder.matches(senha, usuario.get().getSenha()); // Compara senha criptografada
     }
+    
+    public boolean existsByEmail(String email) {
+        return usuarioRepository.existsByEmail(email);
+    }
+
 }

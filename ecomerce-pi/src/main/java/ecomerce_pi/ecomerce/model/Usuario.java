@@ -1,6 +1,6 @@
 package ecomerce_pi.ecomerce.model;
 
-import jakarta.persistence.*; // Importa as classes necessárias para a persistência
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "usuarios")
@@ -19,6 +19,13 @@ public class Usuario {
     @Enumerated(EnumType.STRING) // Usando EnumType.STRING para armazenar o valor textual do Role
     private Role role; // Declaração do campo 'role'
 
+    @Column(nullable = false)
+    private String nome; // 
+    
+    @Column(unique = true, nullable = false)
+    private String cpf; // Campo para CPF do usuário
+
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -49,5 +56,21 @@ public class Usuario {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 }
