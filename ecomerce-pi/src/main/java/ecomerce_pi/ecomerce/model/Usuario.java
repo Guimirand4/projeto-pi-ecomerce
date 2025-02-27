@@ -16,14 +16,17 @@ public class Usuario {
     @Column(nullable = false)
     private String senha;  // Senha será armazenada criptografada
 
-    @Enumerated(EnumType.STRING) // Usando EnumType.STRING para armazenar o valor textual do Role
-    private Role role; // Declaração do campo 'role'
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(nullable = false)
-    private String nome; // 
-    
+    private String nome;
+
     @Column(unique = true, nullable = false)
-    private String cpf; // Campo para CPF do usuário
+    private String cpf;
+
+    @Column(nullable = false)
+    private boolean ativo = true; // Campo para ativação/inativação
 
     // Getters e Setters
     public Long getId() {
@@ -72,5 +75,13 @@ public class Usuario {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 }

@@ -12,7 +12,7 @@ import java.util.Optional;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder; // Injetando o PasswordEncoder
+    private final PasswordEncoder passwordEncoder;
 
     public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
@@ -20,17 +20,44 @@ public class UsuarioService {
     }
 
     public Usuario cadastrarUsuario(Usuario usuario) {
-        usuario.setSenha(passwordEncoder.encode(usuario.getSenha())); // Criptografa a senha antes de salvar
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         return usuarioRepository.save(usuario);
     }
 
     public boolean autenticarUsuario(String email, String senha) {
         Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
-        return usuario.isPresent() && passwordEncoder.matches(senha, usuario.get().getSenha()); // Compara senha criptografada
+        return usuario.isPresent() && passwordEncoder.matches(senha, usuario.get().getSenha());
     }
-    
+
+    public List<Usuario> listarUsuarios() {
+        return usuarioRepository.findAll();
+    }
+
+    public boolean atualizarUsuario(Long id, Usuario usuarioAtualizado) {
+        Optional<Usuario> usuarioExistente = usuarioRepository.findById(id);
+        if (usuarioExistente.isPresent()) {
+            Usuario usuario = usuarioExistente.get();
+            usuario.setNome(usuarioAtualizado.getNome());
+            usuario.setEmail(usuarioAtualizado.getEmail());
+            usuario.setCpf(usuarioAtualizado.getCpf());
+            usuario.setRole(usuarioAtualizado.getRole());
+            usuarioRepository.save(usuario);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean alterarStatusUsuario(Long id) {
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if (usuario.isPresent()) {
+            usuario.get().setAtivo(!usuario.get().isAtivo());
+            usuarioRepository.save(usuario.get());
+            return true;
+        }
+        return false;
+    }
+
     public boolean existsByEmail(String email) {
         return usuarioRepository.existsByEmail(email);
     }
-
 }

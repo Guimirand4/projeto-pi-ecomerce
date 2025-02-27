@@ -19,13 +19,11 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Criptografia de senha com BCrypt
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Definição do AuthenticationManager com UserDetailsService
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -35,25 +33,32 @@ public class SecurityConfig {
         return new ProviderManager(List.of(authProvider));
     }
 
-    // Configuração das regras de segurança HTTP
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())  // Desativa CSRF (para APIs)
+            .csrf(csrf -> csrf.disable()) // 🔹 Desativando CSRF para evitar erros em requisições POST
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/usuarios/cadastro", "/usuarios/login", "/login.html", "/cadastro.html", "/admin.html").permitAll()  // Permite acesso ao login e cadastro
-                .anyRequest().authenticated()  // Qualquer outra requisição precisa de autenticação
+                .requestMatchers( // 🔥 Permitir acesso público às páginas e endpoints
+                    "/usuarios/cadastro",
+                    "/usuarios/login",
+                    "/login.html",
+                    "/cadastro.html",
+                    "/admin.html",
+                    "/listaUsers.html",
+                    "/usuarios/listar" // 🔹 Agora está liberado
+                ).permitAll()
+                .anyRequest().authenticated() // 🔒 Protege o resto do sistema
             )
             .formLogin(form -> form
-                .loginPage("/login.html")  // Página de login
-                .loginProcessingUrl("/login")  // URL para processar login
-                .defaultSuccessUrl("/home", true)  // Redirecionamento após login bem-sucedido
-                .failureUrl("/login-error")  // Redirecionamento em caso de falha
+                .loginPage("/login.html") // 🔹 Página de login
+                .loginProcessingUrl("/usuarios/login") // 🔥 Agora bate com o endpoint do back-end
+                .defaultSuccessUrl("/admin.html", true) // 🔥 Corrigido para uma página válida
+                .failureUrl("/login.html?error=true") // 🔹 Redireciona para login com erro
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/login.html")  // Redireciona para login após logout
+                .logoutSuccessUrl("/login.html") // 🔥 Após logout, redireciona para login
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
             );
