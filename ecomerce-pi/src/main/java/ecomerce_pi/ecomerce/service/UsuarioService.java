@@ -60,4 +60,7 @@ public class UsuarioService {
     public boolean existsByEmail(String email) {
         return usuarioRepository.existsByEmail(email);
     }
+    public Optional<Usuario> buscarUsuarioPorId(Long id) {
+        return usuarioRepository.findById(id);
+    }
 }

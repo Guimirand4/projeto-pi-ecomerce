@@ -13,14 +13,35 @@
                 <th>Nome</th>
                 <th>Email</th>
                 <th>CPF</th>
-                <th>Senha</th> <!-- Adicionando Senha -->
                 <th>Role</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody id="userTableBody">
             <!-- Os usuários serão inseridos aqui -->
         </tbody>
     </table>
+
+    <!-- Formulário de edição (inicialmente oculto) -->
+    <div id="editForm" style="display: none;">
+        <h2>Editar Usuário</h2>
+        <form id="editUserForm">
+            <input type="hidden" id="editUserId">
+            <label for="editNome">Nome:</label>
+            <input type="text" id="editNome" required><br>
+            <label for="editEmail">Email:</label>
+            <input type="email" id="editEmail" required><br>
+            <label for="editCpf">CPF:</label>
+            <input type="text" id="editCpf" required><br>
+            <label for="editRole">Role:</label>
+            <select id="editRole" required>
+                <option value="ADMIN">ADMIN</option>
+                <option value="ESTOQUISTA">ESTOQUISTA</option>
+            </select><br>
+            <button type="submit">Salvar</button>
+            <button type="button" onclick="fecharFormulario()">Cancelar</button>
+        </form>
+    </div>
 
     <script>
         function carregarUsuarios() {
@@ -43,8 +64,10 @@
                             <td>${usuario.nome}</td>
                             <td>${usuario.email}</td>
                             <td>${usuario.cpf}</td>
-                            <td>${usuario.senha}</td> <!-- Exibindo a senha (criptografada) -->
                             <td>${usuario.role}</td>
+                            <td>
+                                <button onclick="abrirFormularioEdicao(${usuario.id})">Editar</button>
+                            </td>
                         `;
 
                         tbody.appendChild(tr);
@@ -56,7 +79,74 @@
                 });
         }
 
-        // Carrega os usuários ao abrir a página
+        function abrirFormularioEdicao(userId) {
+            fetch(`http://localhost:8080/usuarios/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erro ao buscar usuário");
+                }
+                return response.json();
+            })
+            .then(usuario => {
+                document.getElementById("editUserId").value = usuario.id;
+                document.getElementById("editNome").value = usuario.nome;
+                document.getElementById("editEmail").value = usuario.email;
+                document.getElementById("editCpf").value = usuario.cpf;
+                document.getElementById("editRole").value = usuario.role;
+                
+                document.getElementById("editForm").style.display = "block";
+            })
+            .catch(error => {
+                console.error("Erro:", error);
+                alert("Erro ao carregar dados do usuário.");
+            });
+        }
+
+        function fecharFormulario() {
+            document.getElementById("editForm").style.display = "none";
+        }
+
+        document.getElementById("editUserForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const userId = document.getElementById("editUserId").value;
+            const usuarioAtualizado = {
+                nome: document.getElementById("editNome").value,
+                email: document.getElementById("editEmail").value,
+                cpf: document.getElementById("editCpf").value,
+                role: document.getElementById("editRole").value
+            };
+
+            fetch(`http://localhost:8080/usuarios/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(usuarioAtualizado)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erro ao atualizar usuário");
+                }
+                return response.text();
+            })
+            .then(message => {
+                alert(message);
+                fecharFormulario();
+                carregarUsuarios();
+            })
+            .catch(error => {
+                console.error("Erro:", error);
+                alert("Erro ao atualizar usuário.");
+            });
+        });
+
         window.onload = carregarUsuarios;
     </script>
 </body>

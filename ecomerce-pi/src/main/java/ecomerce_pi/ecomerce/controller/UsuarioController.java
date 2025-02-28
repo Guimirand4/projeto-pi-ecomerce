@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -93,5 +94,11 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                              .body("Erro interno: " + e.getMessage());
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> buscarUsuarioPorId(@PathVariable Long id) {
+        Optional<Usuario> usuario = usuarioService.buscarUsuarioPorId(id);
+        return usuario.map(ResponseEntity::ok)
+                      .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
+    }  
     
 }

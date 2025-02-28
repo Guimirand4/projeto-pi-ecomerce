@@ -36,29 +36,30 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // 🔹 Desativando CSRF para evitar erros em requisições POST
+            .csrf(csrf -> csrf.disable()) // Desativando CSRF
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers( // 🔥 Permitir acesso público às páginas e endpoints
+                .requestMatchers(
                     "/usuarios/cadastro",
                     "/usuarios/login",
                     "/login.html",
                     "/cadastro.html",
                     "/admin.html",
                     "/listaUsers.html",
-                    "/usuarios/listar" // 🔹 Agora está liberado
-                ).permitAll()
-                .anyRequest().authenticated() // 🔒 Protege o resto do sistema
+                    "/usuarios/listar",
+                    "/usuarios/{id}" // 🔹 Liberando o endpoint para buscar usuário por ID
+                ).permitAll() // Permite acesso público aos endpoints listados
+                .anyRequest().authenticated() // Exige autenticação para o resto
             )
             .formLogin(form -> form
-                .loginPage("/login.html") // 🔹 Página de login
-                .loginProcessingUrl("/usuarios/login") // 🔥 Agora bate com o endpoint do back-end
-                .defaultSuccessUrl("/admin.html", true) // 🔥 Corrigido para uma página válida
-                .failureUrl("/login.html?error=true") // 🔹 Redireciona para login com erro
+                .loginPage("/login.html") // Página de login
+                .loginProcessingUrl("/usuarios/login") // Endpoint de processamento de login
+                .defaultSuccessUrl("/admin.html", true) // Redirecionamento após login bem-sucedido
+                .failureUrl("/login.html?error=true") // Redirecionamento em caso de falha
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/login.html") // 🔥 Após logout, redireciona para login
+                .logoutSuccessUrl("/login.html") // Redirecionamento após logout
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
             );

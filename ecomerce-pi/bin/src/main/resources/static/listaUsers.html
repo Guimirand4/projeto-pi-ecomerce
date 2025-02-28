@@ -1,11 +1,63 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Bem-vindo!</title>
+    <title>Lista de Usuários</title>
 </head>
 <body>
-    <h1>ADICIONAR LISTA DE USUARIOS AQUI!</h1>
-    <p>ADICIONAR LISTA DE USUARIOS AQUI</p>
+    <h1>Lista de Usuários</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>CPF</th>
+                <th>Senha</th> <!-- Adicionando Senha -->
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody">
+            <!-- Os usuários serão inseridos aqui -->
+        </tbody>
+    </table>
+
+    <script>
+        function carregarUsuarios() {
+            fetch("http://localhost:8080/usuarios/listar")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Erro ao buscar usuários");
+                    }
+                    return response.json();
+                })
+                .then(usuarios => {
+                    const tbody = document.getElementById("userTableBody");
+                    tbody.innerHTML = ""; // Limpa a tabela antes de inserir novos dados
+
+                    usuarios.forEach(usuario => {
+                        const tr = document.createElement("tr");
+
+                        tr.innerHTML = `
+                            <td>${usuario.id}</td>
+                            <td>${usuario.nome}</td>
+                            <td>${usuario.email}</td>
+                            <td>${usuario.cpf}</td>
+                            <td>${usuario.senha}</td> <!-- Exibindo a senha (criptografada) -->
+                            <td>${usuario.role}</td>
+                        `;
+
+                        tbody.appendChild(tr);
+                    });
+                })
+                .catch(error => {
+                    console.error("Erro:", error);
+                    alert("Erro ao carregar usuários.");
+                });
+        }
+
+        // Carrega os usuários ao abrir a página
+        window.onload = carregarUsuarios;
+    </script>
 </body>
 </html>
